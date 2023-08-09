@@ -22,7 +22,7 @@ def process_command(command):
 
 
 while True:
-    with sr.Microphone() as source:
+    with sr.Microphone(device_index=1) as source:
         print("Listening...")
         audio_data = recognizer.listen(source)
         try:
