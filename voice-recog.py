@@ -6,8 +6,11 @@ import speech_recognition as sr
 from gtts import gTTS
 
 # Initialize DeepSpeech model
-model = deepspeech.Model('deepspeech-0.9.3-models.pbmm')
-model.enableExternalScorer('deepspeech-0.9.3-models.scorer')
+model_path = "/home/pi/BMO/BMO-raspberry-pi/deepspeech-0.9.3-models.pbmm"
+scorer_path = "/home/pi/BMO/BMO-raspberry-pi/deepspeech-0.9.3-models.scorer"
+model = deepspeech.Model(model_path)
+model.enableExternalScorer(scorer_path)
+
 
 # Configuration for capturing audio from microphone
 FORMAT = pyaudio.paInt16
