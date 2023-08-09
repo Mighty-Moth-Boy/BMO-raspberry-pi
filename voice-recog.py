@@ -6,7 +6,7 @@ import speech_recognition as sr
 from gtts import gTTS
 
 # Initialize DeepSpeech model
-model_path = "/home/pi/BMO/BMO-raspberry-pi/deepspeech-0.9.3-models.pbmm"
+model_path = "/home/pi/BMO/BMO-raspberry-pi/deepspeech-0.9.3-models.tflite"
 scorer_path = "/home/pi/BMO/BMO-raspberry-pi/deepspeech-0.9.3-models.scorer"
 model = deepspeech.Model(model_path)
 model.enableExternalScorer(scorer_path)
