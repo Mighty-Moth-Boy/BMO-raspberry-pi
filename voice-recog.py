@@ -5,7 +5,7 @@ from gradio_client import Client
 import random
 
 # Set up Gradio client
-client = Client("https://e99ee63ec117b91eee.gradio.live/")
+client = Client("https://2e4eb32d100d705a8e.gradio.live/")
 
 # Define the list of potential responses
 responses = {
@@ -30,11 +30,27 @@ def speak(text):
     os.system(f"wget {audio_url} -O response.mp3")
     os.system("mpg321 response.mp3")
 
+import glob
+
+# ... [rest of the imports and code]
+
+def play_random_song():
+    # List all the mp3 files in the songs directory
+    songs = glob.glob("./BMO-songs/*.mp3")
+    
+    # Choose a song at random
+    song = random.choice(songs)
+    
+    # Play the chosen song
+    os.system(f"mpg321 {song}")
 
 def process_command(command):
     for key, possible_responses in responses.items():
         if fuzz.partial_ratio(command, key) > 80:
             return random.choice(possible_responses)
+    if fuzz.partial_ratio(command, "sing me a song") > 80:
+        play_random_song()
+        return "Playing a song for you!"
     return "What?"
 
 while True:
