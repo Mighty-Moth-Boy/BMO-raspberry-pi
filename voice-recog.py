@@ -2,6 +2,7 @@ import os
 import speech_recognition as sr
 from fuzzywuzzy import fuzz
 from gradio_client import Client
+import random
 
 # Set up Gradio client
 client = Client("https://e99ee63ec117b91eee.gradio.live/")
@@ -15,17 +16,20 @@ responses = {
 recognizer = sr.Recognizer()
 
 def speak(text):
+    api_key = "70174fc2caa769dafde9faff20cb5777"
     result = client.predict(
-        text,  # Input text
-        text,  # API Key for ElevenLabs (or leave empty for GoogleTTS)
-        "Adam",  # Voice
-        "en",  # Language
+        api_key,           # API Key for ElevenLabs
+        text,              # Input text
+        "Elli",            # Voice
+        "en",              # Language
         fn_index=5
     )
     # The result should contain the transformed audio URL. Download and save this to "response.mp3"
     # You might need to further process the result to get the exact audio URL.
-    
+    audio_url = result[0]   # Adjust this if the structure of result is different.
+    os.system(f"wget {audio_url} -O response.mp3")
     os.system("mpg321 response.mp3")
+
 
 def process_command(command):
     for key, possible_responses in responses.items():
