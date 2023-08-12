@@ -75,25 +75,28 @@ def process_command(command):
             return
     # If no specific response matches
     # speak_as_bmo("What?")
+    speak('what')
     play_video(TALKING_VIDEO, 2)  # Assuming 2 seconds for a generic "What?" response
 
 
-
-# Main loop
-try:
-    while True:
-        with sr.Microphone() as source:
-            print("Listening...")
-            audio_data = recognizer.listen(source)
-            try:
-                text = recognizer.recognize_google(audio_data)
-                print("You said:", text)
-                process_command(text)
-            except sr.UnknownValueError:
-                print("Sorry mic no worky :(")
-except KeyboardInterrupt:
-    # Handle Ctrl+C to exit
-    print("Exiting...")
+def play_idle_video():
+    #"""Continuously play the idle video."""
+    # Main loop
+    try:
+        while True:
+            play_video(IDLE_VIDEO)
+            with sr.Microphone() as source:
+                print("Listening...")
+                audio_data = recognizer.listen(source)
+                try:
+                    text = recognizer.recognize_google(audio_data)
+                    print("You said:", text)
+                    process_command(text)
+                except sr.UnknownValueError:
+                    print("Sorry mic no worky :(")
+    except KeyboardInterrupt:
+        # Handle Ctrl+C to exit
+        print("Exiting...")
 
 # Outside of the while loop, let's run the idle video loop
 play_idle_video()
