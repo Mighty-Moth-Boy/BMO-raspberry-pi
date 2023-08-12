@@ -7,7 +7,7 @@ import random
 import time
 
 # Set up Gradio client
-client = Client("http://localhost:7897/")
+client = Client("http://0.0.0.0:7897/")
 
 IDLE_VIDEO = "./Videos/BMO-idle.mp4"
 TALKING_VIDEO = "./Videos/BMO-talking.mp4"
