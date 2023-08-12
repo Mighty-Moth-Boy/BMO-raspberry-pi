@@ -8,7 +8,7 @@ import random
 import time
 
 # Set up Gradio client
-client = Client("http://localhost:7897/")
+# client = Client("https://d17ccab4fa91802148.gradio.live/")
 
 # Set up speech recognizer
 recognizer = sr.Recognizer()
@@ -45,6 +45,7 @@ def play_idle_video():
 def speak(text):
     tts = gTTS(text=text, lang='en')
     tts.save("response.mp3")
+    os.system("omxplayer response.mp3")
 
 
 def process_command(command):
@@ -76,7 +77,7 @@ def play_response_and_video(text, video_path, duration):
 
 
 # Example usage:
-# play_response_and_video("Hello! I'm BeeMoe!", TALKING_VIDEO)
+process_command('hello')
 
 
 # Main loop
