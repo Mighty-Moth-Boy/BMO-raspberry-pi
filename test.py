@@ -15,10 +15,9 @@ test_speak("This is a test.")
 def speak_as_bmo():
     result = client.predict(
         0,	# int | float (numeric value between 0 and 2333) in 'Select Speaker/Singer ID:' Slider component
-        "",	# str  in 'Add audio's name to the path to the audio file to be processed (default is the correct format example) Remove the path to use an audio from the dropdown list:' Textbox component
-        "",	# str (Option from: ['audios/LowTierGodSpeech.mp3', 'audios/SIX-CONSOLES.wav', 'audios/borrow-a-fry.mp3', 'audios/somegirl.mp3', 'audios/someguy.mp3']) in 'Auto detect audio path and select from the dropdown:' Dropdown component
+        "audios/SIX-CONSOLES.wav",	# str  in 'Add audio's name to the path to the audio file to be processed (default is the correct format example) Remove the path to use an audio from the dropdown list:' Textbox component
+        "audios/SIX-CONSOLES.wav",	# str (Option from: ['audios/LowTierGodSpeech.mp3', 'audios/SIX-CONSOLES.wav', 'audios/borrow-a-fry.mp3', 'audios/somegirl.mp3', 'audios/someguy.mp3']) in 'Auto detect audio path and select from the dropdown:' Dropdown component
         5,	# int | float  in 'Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12):' Number component
-        "",	# str (filepath or URL to file) in 'F0 curve file (optional). One pitch per line. Replaces the default F0 and pitch modulation:' File component
         "crepe",	# str  in 'Select the pitch extraction algorithm ('pm': faster extraction but lower-quality speech; 'harvest': better bass but extremely slow; 'crepe': better quality but GPU intensive):' Radio component
         "./logs/BMO/added_IVF548_Flat_nprobe_1_BMO_v2.index",	# str  in 'Path to the feature index file. Leave blank to use the selected result from the dropdown:' Textbox component
         "./logs/BMO/added_IVF548_Flat_nprobe_1_BMO_v2.index",	# str (Option from: ['./logs/BMO/added_IVF548_Flat_nprobe_1_BMO_v2.index']) in '3. Path to your added.index file (if it didn't automatically find it.)' Dropdown component
