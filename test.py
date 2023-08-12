@@ -18,7 +18,7 @@ def speak_as_bmo():
 				"Howdy!",	# str  in 'Add audio's name to the path to the audio file to be processed (default is the correct format example) Remove the path to use an audio from the dropdown list:' Textbox component
 				"audios/LowTierGodSpeech.mp3",	# str (Option from: ['audios/LowTierGodSpeech.mp3', 'audios/SIX-CONSOLES.wav', 'audios/borrow-a-fry.mp3', 'audios/somegirl.mp3', 'audios/someguy.mp3']) in 'Auto detect audio path and select from the dropdown:' Dropdown component
 				5,	# int | float  in 'Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12):' Number component
-				"https://github.com/gradio-app/gradio/raw/main/test/test_files/sample_file.pdf",	# str (filepath or URL to file) in 'F0 curve file (optional). One pitch per line. Replaces the default F0 and pitch modulation:' File component
+				"",	# str (filepath or URL to file) in 'F0 curve file (optional). One pitch per line. Replaces the default F0 and pitch modulation:' File component
 				"pm",	# str  in 'Select the pitch extraction algorithm ('pm': faster extraction but lower-quality speech; 'harvest': better bass but extremely slow; 'crepe': better quality but GPU intensive):' Radio component
 				"Howdy!",	# str  in 'Path to the feature index file. Leave blank to use the selected result from the dropdown:' Textbox component
 				"./logs/BMO/added_IVF548_Flat_nprobe_1_BMO_v2.index",	# str (Option from: ['./logs/BMO/added_IVF548_Flat_nprobe_1_BMO_v2.index']) in '3. Path to your added.index file (if it didn't automatically find it.)' Dropdown component
@@ -31,7 +31,7 @@ def speak_as_bmo():
 				fn_index=8
   )
   print(result)
-  
+
     # audio_url = result[0]   # Adjust this if the structure of result is different.
     # os.system(f"wget {audio_url} -O response.mp3")
     # os.system("mpg321 response.mp3")
