@@ -7,7 +7,7 @@ import random
 import time
 
 # Set up Gradio client
-client = Client("http://0.0.0.0:7897/")
+client = Client("https://8a050ec6d496eaca5d.gradio.live/")
 
 IDLE_VIDEO = "./Videos/BMO-idle.mp4"
 TALKING_VIDEO = "./Videos/BMO-talking.mp4"
@@ -39,10 +39,10 @@ def speak(text):
     tts = gTTS(text=text, lang='en')
     tts.save("response.mp3")
 
-def speak_as_bmo(path_to_tts_wav):
+def speak_as_bmo():
     result = client.predict(
         0,	# int | float (numeric value between 0 and 2333) in 'Select Speaker/Singer ID:' Slider component
-        path_to_tts_wav,	# str  in 'Add audio's name to the path to the audio file to be processed (default is the correct format example) Remove the path to use an audio from the dropdown list:' Textbox component
+        "./response.mp3",	# str  in 'Add audio's name to the path to the audio file to be processed (default is the correct format example) Remove the path to use an audio from the dropdown list:' Textbox component
         "",	# str (Option from: ['audios/LowTierGodSpeech.mp3', 'audios/SIX-CONSOLES.wav', 'audios/borrow-a-fry.mp3', 'audios/somegirl.mp3', 'audios/someguy.mp3']) in 'Auto detect audio path and select from the dropdown:' Dropdown component
         5,	# int | float  in 'Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12):' Number component
         "",	# str (filepath or URL to file) in 'F0 curve file (optional). One pitch per line. Replaces the default F0 and pitch modulation:' File component
@@ -67,11 +67,12 @@ def process_command(command):
         if fuzz.partial_ratio(command, key) > 80:
             # Calculate duration based on length of response_text
             duration = len(response_text) * 0.1
-            if response_video.len() == 0 :
+            if len(response_video) == 0 :
                 response_video = TALKING_VIDEO
             play_video(response_video, duration)
             speak(response_text)
-            speak_as_bmo("./response.mp3")
+            print()
+            speak_as_bmo()
             return
     # If no specific response matches
     speak_as_bmo("What?")
