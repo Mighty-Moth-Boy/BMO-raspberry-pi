@@ -58,9 +58,18 @@ def play_audio(audio_path):
 def recognize_speech():
     r = sr.Recognizer()
     with sr.Microphone() as source:
-        print("Listening...")
+        print("Say something...")
         audio = r.listen(source)
-    return r.recognize_google(audio)
+
+    try:
+        return r.recognize_google(audio)
+    except sr.UnknownValueError:
+        print("Sorry, I couldn't understand that. Please repeat.")
+        return "unrecognized"  # return a value indicating the speech was not understood
+    except sr.RequestError:
+        print("API unavailable. Please check your internet connection or try again later.")
+        return "error"  # return a value indicating there was an error with the request
+
 
 def display_images_loop():
     screen = pygame.display.set_mode((640, 480))
@@ -85,8 +94,17 @@ def main_loop():
         # If enough time has passed since the last speech recognition, try recognizing again
         if current_time - last_speech_recognition_time > speech_recognition_interval:
             speech_text = recognize_speech()
-            closest_match, score = process.extractOne(speech_text, responses.keys())
+            
+            if speech_text == "unrecognized":
+                speak_text("I didn't catch that. Can you say it again?")
+                last_speech_recognition_time = current_time
+                continue
+            elif speech_text == "error":
+                speak_text("I'm having trouble understanding right now. Please check the connection or try again later.")
+                last_speech_recognition_time = current_time
+                continue
 
+            closest_match, score = process.extractOne(speech_text, responses.keys())
             if score >= 80:
                 response_options = responses[closest_match]
                 selected_response = random.choice(response_options)
@@ -106,6 +124,7 @@ def main_loop():
             screen.blit(img, (0, 0))
             pygame.display.flip()
             time.sleep(image_display_time)
+
 
 
 if __name__ == "__main__":
