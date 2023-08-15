@@ -64,7 +64,7 @@ def play_response_and_video(text, video_path, duration):
     video_thread = threading.Thread(target=play_video, args=(video_path, duration))
     
     # Thread for speaking the response
-    speak_thread = threading.Thread(target=speak, args=(text))
+    speak_thread = threading.Thread(target=speak, args=(text,))
     
     # Start both threads
     video_thread.start()
