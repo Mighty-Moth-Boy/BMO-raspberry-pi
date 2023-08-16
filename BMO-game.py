@@ -75,6 +75,7 @@ def display_images_loop():
     screen = pygame.display.set_mode((640, 480))
     while True:
         selected_image = random.choice(images)
+        print(selected_image)
         img = pygame.image.load(selected_image)
         screen.blit(img, (0, 0))
         pygame.display.flip()
