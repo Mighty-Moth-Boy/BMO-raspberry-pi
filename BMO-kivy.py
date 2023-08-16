@@ -4,6 +4,7 @@ from kivy.uix.image import Image
 from kivy.core.audio import SoundLoader
 from kivy.uix.video import Video
 from kivy.clock import Clock
+import threading
 
 import speech_recognition as sr
 from fuzzywuzzy import process
@@ -82,7 +83,7 @@ class BMOApp(App):
         video = Video(source=video_path, allow_stretch=True)
         video.bind(eos=self.on_video_end)  # Bind the end-of-stream event
         self.layout.add_widget(video)
-        video.play()
+        video.state = 'play'  # Change this lin
 
     def on_video_end(self, *args):
         # This function is called when the video ends
@@ -92,8 +93,11 @@ class BMOApp(App):
         Clock.schedule_interval(self.listen_for_command, 10)  # Start listening for commands again
 
     def speak(self, text):
-        tts = gTTS(text)
-        tts.save("temp_audio.mp3")
-        os.system("mpg321 temp_audio.mp3")
+        def play_tts_audio():
+            tts = gTTS(text)
+            tts.save("temp_audio.mp3")
+            os.system("mpg321 temp_audio.mp3")
+
+        threading.Thread(target=play_tts_audio).start()
 
 BMOApp().run()
