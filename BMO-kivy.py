@@ -36,19 +36,34 @@ image_directory = "./faces"
 images = [os.path.join(image_directory, f) for f in os.listdir(image_directory) if f.endswith('.jpg')]
 
 class BMOApp(App):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.is_playing = False  # Flag to check if video or audio is currently playing
+
     def build(self):
         self.layout = BoxLayout()
         self.image = Image(source=random.choice(images), allow_stretch=True)
         self.layout.add_widget(self.image)
         Clock.schedule_interval(self.listen_for_command, 10)  # Check for voice command every 10 seconds
+        Clock.schedule_interval(self.change_face, 40)  # Change face every 40 seconds
         return self.layout
+
+    def change_face(self, *args):
+        self.image.source = random.choice(images)
 
     def play_audio(self, audio_path):
         sound = SoundLoader.load(audio_path)
         if sound:
             sound.play()
+            sound.bind(on_stop=self.on_audio_end)
+
+    def on_audio_end(self, *args):
+        self.is_playing = False
 
     def listen_for_command(self, *args):
+        if self.is_playing:  # If a video or audio is currently playing, don't listen for commands
+            return
+        
         r = sr.Recognizer()
         with sr.Microphone() as source:
             audio = r.listen(source)
@@ -64,6 +79,7 @@ class BMOApp(App):
             self.speak("I'm having trouble understanding right now. Please check the connection or try again later.")
 
     def process_command(self, command):
+        self.is_playing = True  # Set the flag to indicate that a video or audio will be playing
         if command == "stop":
             self.speak(responses["stop"][0]["response"])
             self.stop()  # This will stop the Kivy application
@@ -87,6 +103,7 @@ class BMOApp(App):
 
     def on_video_end(self, *args):
         # This function is called when the video ends
+        self.is_playing = False  # Reset the flag
         self.layout.clear_widgets()
         self.image = Image(source=random.choice(images), allow_stretch=True)
         self.layout.add_widget(self.image)
