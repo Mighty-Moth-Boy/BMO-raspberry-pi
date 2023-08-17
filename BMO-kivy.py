@@ -18,15 +18,16 @@ SONG_IMAGE = './song-face.PNG'
 responses = {
     "hello": [
         {"response": "hello im bmo", "video": TALKING_VIDEO},
-        {"response": "hi there!", "video": TALKING_VIDEO}
+        {"response": "hi there!", "video": TALKING_VIDEO},
+        {"response": "YEAH BMO", "video": TALKING_VIDEO}
     ],
     "what time is it": [
         {"video": "./Videos/Adventure-Time-Intro.mp4"}
     ],
     "hey sing me a song": [
-        {"video": TALKING_VIDEO, "audio": "./songs/Fly me to the Moon.mp3"},
-        {"video": TALKING_VIDEO, "audio": "./songs/I Dont Want to Set the World on Fire.mp3"},
-        {"video": TALKING_VIDEO, "audio": "./songs/Rises the Moon.mp3"}
+        {"audio": "./songs/Fly me to the Moon.mp3"},
+        {"audio": "./songs/I Dont Want to Set the World on Fire.mp3"},
+        {"audio": "./songs/Rises the Moon.mp3"}
     ],
     "stop": [
         {"response": "Shutting down. Goodbye!"}
