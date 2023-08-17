@@ -5,7 +5,7 @@ from kivy.core.audio import SoundLoader
 from kivy.uix.video import Video
 from kivy.clock import Clock
 import threading
-
+import time
 import speech_recognition as sr
 from fuzzywuzzy import process
 import os
@@ -88,12 +88,26 @@ class BMOApp(App):
 
     def play_video_for_duration(self, video_path, duration):
         """Play a video and loop it for the specified duration."""
-        self.max_video_duration = duration
         self.layout.clear_widgets()
-        video = Video(source=video_path, allow_stretch=True, loop=True)
-        video.bind(position=self.check_video_position)
+        self.video_duration = duration
+        self.video_start_time = time.time()  # Store the starting time
+        
+        video = Video(source=video_path, allow_stretch=True)
+        video.bind(eos=self.loop_video)
         self.layout.add_widget(video)
         video.state = 'play'
+        
+    def loop_video(self, instance):
+        """Restart the video if it hasn't reached the specified duration."""
+        elapsed_time = time.time() - self.video_start_time
+        if elapsed_time < self.video_duration:
+            instance.seek(0)
+            instance.state = 'play'
+        else:
+            instance.state = 'stop'
+            self.layout.clear_widgets()
+            self.image = Image(source=random.choice(images), allow_stretch=True)
+            self.layout.add_widget(self.image)
 
     def check_video_position(self, instance, value):
         """Stop the video if it exceeds the specified duration."""
