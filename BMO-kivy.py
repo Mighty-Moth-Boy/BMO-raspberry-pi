@@ -13,6 +13,7 @@ import os
 import random
 
 TALKING_VIDEO = './Videos/BMO-talking.mp4'
+SONG_IMAGE = './song-face.PNG' 
 
 responses = {
     "hello": [
@@ -54,11 +55,24 @@ class BMOApp(App):
     def play_audio(self, audio_path):
         sound = SoundLoader.load(audio_path)
         if sound:
+            self.show_image_while_song_plays(SONG_IMAGE)
             sound.play()
             sound.bind(on_stop=self.on_audio_end)
 
+    def show_image_while_song_plays(self, image_path):
+        self.layout.clear_widgets()
+        song_image = Image(source=image_path, allow_stretch=True)
+        self.layout.add_widget(song_image)
+
     def on_audio_end(self, *args):
         self.is_playing = False
+        self.end_song_display()
+
+    def end_song_display(self, *args):
+        self.layout.clear_widgets()
+        self.image = Image(source=random.choice(images), allow_stretch=True)
+        self.layout.add_widget(self.image)
+        Clock.schedule_once(self.listen_for_command, 5)  # Delay for 5 seconds before listening again
 
     def listen_for_command(self, *args):
         if self.is_playing:  # If a video or audio is currently playing, don't listen for commands
@@ -74,7 +88,7 @@ class BMOApp(App):
             if score >= 80:
                 self.process_command(closest_match)
         except sr.UnknownValueError:
-            self.speak("I didn't catch that. Can you say it again?")
+            self.speak("I don't know what you said")
         except sr.RequestError:
             self.speak("I'm having trouble understanding right now. Please check the connection or try again later.")
 
@@ -95,19 +109,18 @@ class BMOApp(App):
             self.play_audio(selected_response["audio"])
 
     def play_video(self, video_path):
-        self.layout.clear_widgets()  # Clear the current widgets
+        self.layout.clear_widgets()
         video = Video(source=video_path, allow_stretch=True)
-        video.bind(eos=self.on_video_end)  # Bind the end-of-stream event
+        video.bind(eos=self.on_video_end)
         self.layout.add_widget(video)
-        video.state = 'play'  # Change this lin
+        video.state = 'play'
 
     def on_video_end(self, *args):
-        # This function is called when the video ends
-        self.is_playing = False  # Reset the flag
+        self.is_playing = False
         self.layout.clear_widgets()
         self.image = Image(source=random.choice(images), allow_stretch=True)
         self.layout.add_widget(self.image)
-        Clock.schedule_interval(self.listen_for_command, 10)  # Start listening for commands again
+        Clock.schedule_once(self.listen_for_command, 5)
 
     def speak(self, text):
         def play_tts_audio():
@@ -115,6 +128,22 @@ class BMOApp(App):
             tts.save("temp_audio.mp3")
             os.system("mpg321 temp_audio.mp3")
 
+        # Calculate duration based on the length of text and play the talking video for that duration
+        duration = len(text) * 0.1
+        self.play_video_for_duration(TALKING_VIDEO, duration)
         threading.Thread(target=play_tts_audio).start()
+
+    def play_video_for_duration(self, video_path, duration):
+        self.layout.clear_widgets()
+        video = Video(source=video_path, allow_stretch=True, duration=duration)
+        video.bind(eos=self.on_video_end_for_duration)
+        self.layout.add_widget(video)
+        video.state = 'play'
+
+    def on_video_end_for_duration(self, *args):
+        self.layout.clear_widgets()
+        self.image = Image(source=random.choice(images), allow_stretch=True)
+        self.layout.add_widget(self.image)
+        Clock.schedule_once(self.listen_for_command, 5)
 
 BMOApp().run()
