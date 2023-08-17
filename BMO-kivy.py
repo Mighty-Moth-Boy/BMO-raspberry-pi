@@ -8,55 +8,117 @@ import threading
 
 import speech_recognition as sr
 from fuzzywuzzy import process
-from gtts import gTTS
 import os
 import random
 
 TALKING_VIDEO = './Videos/BMO-talking.mp4'
-SONG_IMAGE = './song-face.PNG' 
 
 responses = {
     "hello": [
-        {"response": "hello im bmo", "video": TALKING_VIDEO},
-        {"response": "hi there!", "video": TALKING_VIDEO},
-        {"response": "YEAH BMO", "video": TALKING_VIDEO}
+        {"audio": "./responses/hello-1.mp3.wav"},
+        {"audio": "./responses/hello-2.mp3.wav"},
+        {"audio": "./responses/hello-3.mp3.wav"}
     ],
+    "how are you": [
+        {"audio": "./responses/how-are-you-1.mp3.wav"},
+        {"audio": "./responses/how-are-you-2.mp3.wav"},
+        {"audio": "./responses/how-are-you-3.mp3.wav"}
+    ],
+
+    "sing me a song": [
+        {"audio": "./songs/Fly me to the Moon.mp3", "picture": "./pictures/space-cowboy.jpg"},
+        {"audio": "./songs/I Dont Want to Set the World on Fire.mp3", "picture": "./pictures/cowboy.PNG"},
+        {"audio": "./songs/Rises the Moon.mp3", "picture": "./pictures/happy.PNG"},
+        {"audio": "./songs/From The Start.mp3", "picture": "./pictures/song-face.PNG"}
+    ],
+    "tell me something funny":[
+        {"audio": "./memes/SIX-CONSOLES.wav", "picture": "./pictures/song-face.PNG"},
+    ],
+
     "what time is it": [
-        {"video": "./Videos/Adventure-Time-Intro.mp4"}
+        {"video": "./Videos/Original-Intro.mp4"},
+        {"video": "./Videos/Bad-Jubies-intro.mp4.mp4"},
+        {"video": "./Videos/elements-intro.mp4.mp4"},
+        {"video": "./Videos/Finale-intro.mp4.mp4"},
+        {"video": "./Videos/Food-Chain-intro.mp4.mp4"},
+        {"video": "./Videos/Islands-intro.mp4.mp4"},
+        {"video": "./Videos/Pixel-intro.mp4.mp4"},
+        {"video": "./Videos/Stakes-intro.mp4.mp4"}
     ],
-    "hey sing me a song": [
-        {"audio": "./songs/Fly me to the Moon.mp3"},
-        {"audio": "./songs/I Dont Want to Set the World on Fire.mp3"},
-        {"audio": "./songs/Rises the Moon.mp3"}
-    ],
-    "stop": [
-        {"response": "Shutting down. Goodbye!"}
-    ],
+    "tell me a story": [
+        {"video": "./Videos/boat-story.mp4"},
+        {"video": "./Videos/Robot-Cowboy.mp4"},
+    ]
 }
 
 image_directory = "./faces"
 images = [os.path.join(image_directory, f) for f in os.listdir(image_directory) if f.endswith('.jpg')]
 
+
 class BMOApp(App):
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.is_playing = False  # Flag to check if video or audio is currently playing
+        self.max_video_duration = 0
 
     def build(self):
         self.layout = BoxLayout()
         self.image = Image(source=random.choice(images), allow_stretch=True)
         self.layout.add_widget(self.image)
-        Clock.schedule_interval(self.listen_for_command, 10)  # Check for voice command every 10 seconds
-        Clock.schedule_interval(self.change_face, 40)  # Change face every 40 seconds
+        
+        # Start with the initial greeting
+        self.initial_greeting()
+        
         return self.layout
+
+    def initial_greeting(self):
+        # Play the talking video and loop it for the duration of the audio
+        initial_audio_path = "./responses/startup.mp3"
+        self.talk_audio(initial_audio_path)
+
+        # Schedule the listener to start after the audio finishes
+        sound = SoundLoader.load(initial_audio_path)
+        if sound:
+            duration = sound.length
+            Clock.schedule_once(self.listen_for_command, duration + 2)  # +2 seconds to give a brief pause before listening
 
     def change_face(self, *args):
         self.image.source = random.choice(images)
 
-    def play_audio(self, audio_path):
+    def play_video_for_duration(self, video_path, duration):
+        """Play a video and loop it for the specified duration."""
+        self.max_video_duration = duration
+        self.layout.clear_widgets()
+        video = Video(source=video_path, allow_stretch=True, loop=True)
+        video.bind(position=self.check_video_position)
+        self.layout.add_widget(video)
+        video.state = 'play'
+
+    def check_video_position(self, instance, value):
+        """Stop the video if it exceeds the specified duration."""
+        if value >= self.max_video_duration:
+            instance.state = 'stop'
+            self.layout.clear_widgets()
+            self.image = Image(source=random.choice(images), allow_stretch=True)
+            self.layout.add_widget(self.image)
+
+    def talk_audio(self, audio_path):
+        """Play an audio and loop a 1-second video until the audio is finished."""
+        self.is_playing = True
         sound = SoundLoader.load(audio_path)
         if sound:
-            self.show_image_while_song_plays(SONG_IMAGE)
+            duration = sound.length
+            self.play_video_for_duration(TALKING_VIDEO, duration)
+            sound.play()
+            sound.bind(on_stop=self.on_audio_end)
+
+    def play_static_audio_with_image(self, audio_path, image_path):
+        """Play an audio and display a specified image until the audio finishes."""
+        self.is_playing = True
+        self.show_image_while_song_plays(image_path)
+        sound = SoundLoader.load(audio_path)
+        if sound:
             sound.play()
             sound.bind(on_stop=self.on_audio_end)
 
@@ -85,29 +147,33 @@ class BMOApp(App):
 
         try:
             speech_text = r.recognize_google(audio)
+            # if "hey BeeMo" not in speech_text.upper():  # Checks if wake word "BMO" is in the recognized text
+            #     return
+
             closest_match, score = process.extractOne(speech_text, responses.keys())
             if score >= 80:
                 self.process_command(closest_match)
         except sr.UnknownValueError:
-            self.speak("I don't know what you said")
+            self.talk_audio("./responses/unknown-value-error.mp3.wav")  # Placeholder for error audio
         except sr.RequestError:
-            self.speak("I'm having trouble understanding right now. Please check the connection or try again later.")
+            self.talk_audio("./responses/fatal-error.mp3.wav")  # Placeholder for error audio
 
     def process_command(self, command):
-        self.is_playing = True  # Set the flag to indicate that a video or audio will be playing
-        if command == "stop":
-            self.speak(responses["stop"][0]["response"])
-            self.stop()  # This will stop the Kivy application
-            return
-        
+        self.is_playing = True  
         response_options = responses[command]
         selected_response = random.choice(response_options)
-        if selected_response.get("response"):
-            self.speak(selected_response["response"])
-        if selected_response.get("video"):
-            self.play_video(selected_response["video"])
+        
         if selected_response.get("audio"):
-            self.play_audio(selected_response["audio"])
+            if selected_response.get("picture"):
+                # Display the specified picture with the audio
+                self.play_static_audio_with_image(selected_response["audio"], selected_response["picture"])
+            else:
+                # If there's no picture, use the talking video as default
+                self.talk_audio(selected_response["audio"])
+        
+        # If there's a video (and it's not the TALKING_VIDEO), play it
+        if selected_response.get("video") and selected_response.get("video") != TALKING_VIDEO:
+            self.play_video(selected_response["video"])
 
     def play_video(self, video_path):
         self.layout.clear_widgets()
@@ -123,28 +189,5 @@ class BMOApp(App):
         self.layout.add_widget(self.image)
         Clock.schedule_once(self.listen_for_command, 5)
 
-    def speak(self, text):
-        def play_tts_audio():
-            tts = gTTS(text)
-            tts.save("temp_audio.mp3")
-            os.system("mpg321 temp_audio.mp3")
-
-        # Calculate duration based on the length of text and play the talking video for that duration
-        duration = len(text) * 0.1
-        self.play_video_for_duration(TALKING_VIDEO, duration)
-        threading.Thread(target=play_tts_audio).start()
-
-    def play_video_for_duration(self, video_path, duration):
-        self.layout.clear_widgets()
-        video = Video(source=video_path, allow_stretch=True, duration=duration)
-        video.bind(eos=self.on_video_end_for_duration)
-        self.layout.add_widget(video)
-        video.state = 'play'
-
-    def on_video_end_for_duration(self, *args):
-        self.layout.clear_widgets()
-        self.image = Image(source=random.choice(images), allow_stretch=True)
-        self.layout.add_widget(self.image)
-        Clock.schedule_once(self.listen_for_command, 5)
 
 BMOApp().run()
