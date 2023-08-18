@@ -11,18 +11,18 @@ from fuzzywuzzy import process
 import os
 import random
 
-TALKING_VIDEO = './Videos/BMO-talking.mp4'
+TALKING_VIDEO = './Videos/talking.mp4'
 
 responses = {
     "hello": [
-        {"audio": "./responses/hello-1.mp3.wav"},
-        {"audio": "./responses/hello-2.mp3.wav"},
-        {"audio": "./responses/hello-3.mp3.wav"}
+        {"audio": "./responses/hello-1.wav"},
+        {"audio": "./responses/hello-2.wav"},
+        {"audio": "./responses/hello-3.wav"}
     ],
     "how are you": [
-        {"audio": "./responses/how-are-you-1.mp3.wav"},
-        {"audio": "./responses/how-are-you-2.mp3.wav"},
-        {"audio": "./responses/how-are-you-3.mp3.wav"}
+        {"audio": "./responses/how-are-you-1.wav"},
+        {"audio": "./responses/how-are-you-2.wav"},
+        {"audio": "./responses/how-are-you-3.wav"}
     ],
 
     "sing me a song": [
@@ -168,12 +168,17 @@ class BMOApp(App):
             if score >= 80:
                 self.process_command(closest_match)
         except sr.UnknownValueError:
-            self.talk_audio("./responses/unknown-value-error.mp3.wav")  # Placeholder for error audio
+            self.talk_audio("./responses/unknown-value-error.wav")  # Placeholder for error audio
         except sr.RequestError:
-            self.talk_audio("./responses/fatal-error.mp3.wav")  # Placeholder for error audio
+            self.talk_audio("./responses/fatal-error.wav")  # Placeholder for error audio
 
     def process_command(self, command):
         self.is_playing = True  
+        if command == "goodnight":
+            self.talk_audio(responses["goodnight"][0]["audio"])
+            self.stop()  # This will stop the Kivy application
+            return
+        
         response_options = responses[command]
         selected_response = random.choice(response_options)
         
