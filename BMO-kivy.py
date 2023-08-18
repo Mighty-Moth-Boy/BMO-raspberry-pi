@@ -1,3 +1,5 @@
+import os
+os.environ['KIVY_AUDIO'] = 'sdl2'
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.image import Image
@@ -8,10 +10,10 @@ import threading
 import time
 import speech_recognition as sr
 from fuzzywuzzy import process
-import os
 import random
 
 TALKING_VIDEO = './Videos/talking.mp4'
+
 
 responses = {
     "hello": [
@@ -37,13 +39,13 @@ responses = {
 
     "what time is it": [
         {"video": "./Videos/Original-Intro.mp4"},
-        {"video": "./Videos/Bad-Jubies-intro.mp4.mp4"},
-        {"video": "./Videos/elements-intro.mp4.mp4"},
-        {"video": "./Videos/Finale-intro.mp4.mp4"},
-        {"video": "./Videos/Food-Chain-intro.mp4.mp4"},
-        {"video": "./Videos/Islands-intro.mp4.mp4"},
-        {"video": "./Videos/Pixel-intro.mp4.mp4"},
-        {"video": "./Videos/Stakes-intro.mp4.mp4"}
+        {"video": "./Videos/Bad-Jubies-intro.mp4"},
+        {"video": "./Videos/elements-intro.mp4"},
+        {"video": "./Videos/Finale-intro.mp4"},
+        {"video": "./Videos/Food-Chain-intro.mp4"},
+        {"video": "./Videos/Islands-intro.mp4"},
+        {"video": "./Videos/Pixel-intro.mp4"},
+        {"video": "./Videos/Stakes-intro.mp4"}
     ],
     "tell me a story": [
         {"video": "./Videos/boat-story.mp4"},
