@@ -97,7 +97,7 @@ class BMOApp(App):
         self.layout.add_widget(video)
         video.state = 'play'
         
-    def loop_video(self, instance):
+    def loop_video(self, instance, state):
         """Restart the video if it hasn't reached the specified duration."""
         elapsed_time = time.time() - self.video_start_time
         if elapsed_time < self.video_duration:
