@@ -2,7 +2,7 @@
 
 Inspired by a creative TikTok showcasing a real-life BMO, this project was my journey into bringing Adventure Time's BMO into the tangible world. When a friend gifted me a Raspberry Pi and a 3D printer, the idea of recreating BMO became irresistible. What started as an inspiration transformed into a month-long passion project, involving meticulous 3D printing, hardware interfacing, and software development.
 
-This was forked from IamMrUnicorn/BMO-Raspberry-Pi, by the way.
+This was forked from [IamMrUnicorn/BMO-Raspberry-Pi](https://github.com/IamMrUnicorn/BMO-raspberry-pi) ,by the way.
 ## 🎨 Features:
 
 ### **3D Printed Model**
