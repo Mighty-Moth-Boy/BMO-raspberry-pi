@@ -20,7 +20,8 @@ This was forked from [IamMrUnicorn/BMO-Raspberry-Pi](https://github.com/IamMrUni
 
 ## 🌟 Future Plans:
 - **Virtual Assistant Capabilities**: BMO's skill set is set to grow! Aiming to incorporate Chat GPT for internet search capabilities to rival virtual assistants like Siri or Alexa.
-- **Gaming Fun**: Plans to bring in Retro Pi are underway, enabling BMO to emulate classic games for hours of nostalgic entertainment.
+- **Gaming Fun**: Plans to bring in Retro Pi are coming soon, enabling BMO to emulate classic games for hours of nostalgic entertainment.
+- **New Audio Support**: Support for .mp3 supprt is coming soon, which will allow you to play your favourite tunes through BMO.
 
 ## 🙏 Acknowledgements:
 - Immense gratitude to the original TikTok creator for sparking the idea and providing the foundational design.
